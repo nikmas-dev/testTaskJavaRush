@@ -10,7 +10,7 @@ public interface ShipService {
     List<Ship> getShipsList(String name, String planet, ShipType shipType, Long after, Long before, Boolean isUsed, Double minSpead,
                             Double maxSpeed, Integer minCrewSize, Integer maxCrewSize, Double minRating, Double maxRating, ShipOrder order,
                             Integer pageNumber, Integer pageSize);
-    Integer getShipsCount(String name, String planet, ShipType shipType, Long after, Long before, Boolean isUsed, Double minSpead,
+    Long getShipsCount(String name, String planet, ShipType shipType, Long after, Long before, Boolean isUsed, Double minSpead,
                       Double maxSpeed, Integer minCrewSize, Integer maxCrewSize, Double minRating, Double maxRating);
     Ship createShip(Ship ship);
     Ship getShip(Long id);

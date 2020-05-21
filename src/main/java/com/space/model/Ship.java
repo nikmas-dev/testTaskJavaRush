@@ -20,6 +20,7 @@ public class Ship {
     @Column(name = "planet")
     private String planet;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "shipType")
     private ShipType shipType;
 

@@ -23,15 +23,15 @@ public class ShipController {
     }
 
     @GetMapping(value = "rest/ships")
-    public ResponseEntity<List<Ship>> getShipsList(@RequestParam(name = "name") String name, @RequestParam(name = "planet") String planet,
-                                                   @RequestParam(name = "ShipType") ShipType shipType, @RequestParam(name = "after") Long after,
-                                                   @RequestParam(name = "before") Long before, @RequestParam(name = "isUsed") Boolean isUsed,
-                                                   @RequestParam(name = "minSpeed") Double minSpeed, @RequestParam(name = "maxSpeed") Double maxSpeed,
-                                                   @RequestParam(name = "minCrewSize") Integer minCrewSize, @RequestParam(name = "maxCrewSize") Integer maxCrewSize,
-                                                   @RequestParam(name = "minRating") Double minRating, @RequestParam(name = "maxRating") Double maxRating,
-                                                   @RequestParam(name = "order") ShipOrder order, @RequestParam(name = "pageNumber") Integer pageNumber,
-                                                   @RequestParam(name = "pageSize") Integer pageSize
-    ){
+    public ResponseEntity<List<Ship>> getShipsList(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "planet", required = false) String planet,
+                                                   @RequestParam(value = "ShipType", required = false) ShipType shipType, @RequestParam(value = "after", required = false) Long after,
+                                                   @RequestParam(value = "before", required = false) Long before, @RequestParam(value = "isUsed", required = false) Boolean isUsed,
+                                                   @RequestParam(value = "minSpeed", required = false) Double minSpeed, @RequestParam(value = "maxSpeed", required = false) Double maxSpeed,
+                                                   @RequestParam(value = "minCrewSize", required = false) Integer minCrewSize, @RequestParam(value = "maxCrewSize", required = false) Integer maxCrewSize,
+                                                   @RequestParam(value = "minRating", required = false) Double minRating, @RequestParam(value = "maxRating", required = false) Double maxRating,
+                                                   @RequestParam(value = "order", required = false) ShipOrder order, @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+                                                   @RequestParam(value = "pageSize", required = false) Integer pageSize
+    ) {
         if (pageNumber == null)
             pageNumber = 0;
 
@@ -51,17 +51,17 @@ public class ShipController {
     }
 
     @GetMapping(value = "rest/ships/count")
-    public ResponseEntity<Integer> getShipsCount(@RequestParam(name = "name") String name, @RequestParam(name = "planet") String planet,
-                                                 @RequestParam(name = "ShipType") ShipType shipType, @RequestParam(name = "after") Long after,
-                                                 @RequestParam(name = "before") Long before, @RequestParam(name = "isUsed") Boolean isUsed,
-                                                 @RequestParam(name = "minSpeed") Double minSpeed, @RequestParam(name = "maxSpeed") Double maxSpeed,
-                                                 @RequestParam(name = "minCrewSize") Integer minCrewSize, @RequestParam(name = "maxCrewSize") Integer maxCrewSize,
-                                                 @RequestParam(name = "minRating") Double minRating, @RequestParam(name = "maxRating") Double maxRating
-    ){
+    public ResponseEntity<Long> getShipsCount(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "planet", required = false) String planet,
+                                                 @RequestParam(value = "ShipType", required = false) ShipType shipType, @RequestParam(value = "after", required = false) Long after,
+                                                 @RequestParam(value = "before", required = false) Long before, @RequestParam(value = "isUsed", required = false) Boolean isUsed,
+                                                 @RequestParam(value = "minSpeed", required = false) Double minSpeed, @RequestParam(value = "maxSpeed", required = false) Double maxSpeed,
+                                                 @RequestParam(value = "minCrewSize", required = false) Integer minCrewSize, @RequestParam(value = "maxCrewSize", required = false) Integer maxCrewSize,
+                                                 @RequestParam(value = "minRating", required = false) Double minRating, @RequestParam(value = "maxRating", required = false) Double maxRating
+    ) {
         if (isUsed == null)
             isUsed = false;
 
-        Integer shipsCount = shipService.getShipsCount(name, planet, shipType, after, before, isUsed, minSpeed, maxSpeed, minCrewSize, maxCrewSize, minRating,
+        Long shipsCount = shipService.getShipsCount(name, planet, shipType, after, before, isUsed, minSpeed, maxSpeed, minCrewSize, maxCrewSize, minRating,
                 maxRating);
 
 
@@ -104,7 +104,7 @@ public class ShipController {
     }
 
     @GetMapping(value = "rest/ships/{id}")
-    public ResponseEntity<Ship> getShip(@PathVariable Long id){
+    public ResponseEntity<Ship> getShip(@PathVariable Long id) {
         if (id < 0)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
@@ -114,7 +114,7 @@ public class ShipController {
     }
 
     @PostMapping(value = "rest/ships/{id}")
-    public ResponseEntity<?> updateShip(@PathVariable Long id, @RequestBody Ship ship){
+    public ResponseEntity<?> updateShip(@PathVariable Long id, @RequestBody Ship ship) {
         if (id < 0)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
@@ -123,7 +123,7 @@ public class ShipController {
     }
 
     @DeleteMapping(value = "rest/ships/{id}")
-    public ResponseEntity<?> deleteShip(@PathVariable Long id){
+    public ResponseEntity<?> deleteShip(@PathVariable Long id) {
         if (id < 0)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
