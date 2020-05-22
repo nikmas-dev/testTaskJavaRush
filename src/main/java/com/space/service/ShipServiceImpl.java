@@ -43,25 +43,26 @@ public class ShipServiceImpl implements ShipService {
 //        return allShips;
 //        Page<Ship> page = new PageImpl<>(allShips, PageRequest.of(pageNumber, pageSize, Sort.by(order.getFieldName()).ascending()), allShips.size());
 //        return page;
-        List<Ship> allShips = shipRepository.findAll();
-        allShips = allShips.stream()
-                .filter(s -> name != null ? s.getName().contains(name) : true)
-                .filter(s -> planet != null ? s.getPlanet().contains(planet) : true)
-                .filter(s -> shipType != null ? s.getShipType().equals(shipType) : true)
-                .filter(s -> after != null ? s.getProdDate().after(new Date(after)) : true)
-                .filter(s -> before != null ? s.getProdDate().before(new Date(before)) : true)
-                .filter(s -> s.getUsed())
-                .filter(s -> minSpeed != null ? s.getSpeed() >= minSpeed : true)
-                .filter(s -> maxSpeed != null ? s.getSpeed() <= maxSpeed : true)
-                .filter(s -> minCrewSize != null ? s.getCrewSize() >= minCrewSize : true)
-                .filter(s -> maxCrewSize != null ? s.getCrewSize() <= maxCrewSize : true)
-                .filter(s -> minRating != null ? s.getRating() >= minRating : true)
-                .filter(s -> maxRating != null ? s.getRating() <= maxRating : true)
-                .collect(Collectors.toCollection(ArrayList::new));
+//        List<Ship> allShips = shipRepository.findAll();
+//        allShips = allShips.stream()
+//                .filter(s -> name != null ? s.getName().contains(name) : true)
+//                .filter(s -> planet != null ? s.getPlanet().contains(planet) : true)
+//                .filter(s -> shipType != null ? s.getShipType().equals(shipType) : true)
+//                .filter(s -> after != null ? s.getProdDate().after(new Date(after)) : true)
+//                .filter(s -> before != null ? s.getProdDate().before(new Date(before)) : true)
+//                .filter(s -> s.getUsed())
+//                .filter(s -> minSpeed != null ? s.getSpeed() >= minSpeed : true)
+//                .filter(s -> maxSpeed != null ? s.getSpeed() <= maxSpeed : true)
+//                .filter(s -> minCrewSize != null ? s.getCrewSize() >= minCrewSize : true)
+//                .filter(s -> maxCrewSize != null ? s.getCrewSize() <= maxCrewSize : true)
+//                .filter(s -> minRating != null ? s.getRating() >= minRating : true)
+//                .filter(s -> maxRating != null ? s.getRating() <= maxRating : true)
+//                .collect(Collectors.toCollection(ArrayList::new));
 
-        Page<Ship> page = new PageImpl<>(allShips, PageRequest.of(pageNumber.orElse(0), pageSize.orElse(3), Sort.by(order.getFieldName()).ascending()), allShips.size());
+//        Page<Ship> page = new PageImpl<>(allShips, PageRequest.of(pageNumber.orElse(0), pageSize.orElse(3), Sort.by(order.getFieldName()).ascending()), allShips.size());
 
-        return page;
+//        shipRepository.findAllBySpeedGreaterThanEqualAndProdDateAfter(minSpeed, new Date(after));
+        return null;
     }
 
 
