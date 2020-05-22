@@ -24,7 +24,7 @@ public class ShipController {
     }
 
     @GetMapping(value = "rest/ships")
-    public ResponseEntity<Page<Ship>> getShipsList(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "planet", required = false) String planet,
+    public ResponseEntity<List<Ship>> getShipsList(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "planet", required = false) String planet,
                                                    @RequestParam(value = "ShipType", required = false) ShipType shipType, @RequestParam(value = "after", required = false) Long after,
                                                    @RequestParam(value = "before", required = false) Long before, @RequestParam(value = "isUsed", required = false) Boolean isUsed,
                                                    @RequestParam(value = "minSpeed", required = false) Double minSpeed, @RequestParam(value = "maxSpeed", required = false) Double maxSpeed,
@@ -39,10 +39,7 @@ public class ShipController {
         if (pageSize == null)
             pageSize = 3;
 
-        if (isUsed == null)
-            isUsed = false;
-
-        Page<Ship> shipList = shipService.getShipsList(name, planet, shipType, after, before, isUsed, minSpeed, maxSpeed, minCrewSize, maxCrewSize, minRating,
+        List<Ship> shipList = shipService.getShipsList(name, planet, shipType, after, before, isUsed, minSpeed, maxSpeed, minCrewSize, maxCrewSize, minRating,
                 maxRating, order, Optional.of(pageNumber), Optional.of(pageSize));
 
         return shipList != null && !shipList.isEmpty()
@@ -53,11 +50,11 @@ public class ShipController {
 
     @GetMapping(value = "rest/ships/count")
     public ResponseEntity<Long> getShipsCount(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "planet", required = false) String planet,
-                                                 @RequestParam(value = "ShipType", required = false) ShipType shipType, @RequestParam(value = "after", required = false) Long after,
-                                                 @RequestParam(value = "before", required = false) Long before, @RequestParam(value = "isUsed", required = false) Boolean isUsed,
-                                                 @RequestParam(value = "minSpeed", required = false) Double minSpeed, @RequestParam(value = "maxSpeed", required = false) Double maxSpeed,
-                                                 @RequestParam(value = "minCrewSize", required = false) Integer minCrewSize, @RequestParam(value = "maxCrewSize", required = false) Integer maxCrewSize,
-                                                 @RequestParam(value = "minRating", required = false) Double minRating, @RequestParam(value = "maxRating", required = false) Double maxRating
+                                              @RequestParam(value = "ShipType", required = false) ShipType shipType, @RequestParam(value = "after", required = false) Long after,
+                                              @RequestParam(value = "before", required = false) Long before, @RequestParam(value = "isUsed", required = false) Boolean isUsed,
+                                              @RequestParam(value = "minSpeed", required = false) Double minSpeed, @RequestParam(value = "maxSpeed", required = false) Double maxSpeed,
+                                              @RequestParam(value = "minCrewSize", required = false) Integer minCrewSize, @RequestParam(value = "maxCrewSize", required = false) Integer maxCrewSize,
+                                              @RequestParam(value = "minRating", required = false) Double minRating, @RequestParam(value = "maxRating", required = false) Double maxRating
     ) {
         if (isUsed == null)
             isUsed = false;

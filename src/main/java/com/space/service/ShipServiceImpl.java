@@ -29,7 +29,7 @@ public class ShipServiceImpl implements ShipService {
 //    }
 
     @Override
-    public Page<Ship> getShipsList(String name, String planet, ShipType shipType, Long after, Long before,
+    public List<Ship> getShipsList(String name, String planet, ShipType shipType, Long after, Long before,
                                    Boolean isUsed, Double minSpeed, Double maxSpeed, Integer minCrewSize,
                                    Integer maxCrewSize, Double minRating, Double maxRating, ShipOrder order,
                                    Optional<Integer> pageNumber, Optional<Integer> pageSize)
@@ -50,19 +50,20 @@ public class ShipServiceImpl implements ShipService {
                 .filter(s -> shipType != null ? s.getShipType().equals(shipType) : true)
                 .filter(s -> after != null ? s.getProdDate().after(new Date(after)) : true)
                 .filter(s -> before != null ? s.getProdDate().before(new Date(before)) : true)
-                .filter(s -> s.getUsed())
+                .filter(s -> isUsed != null ? s.getUsed() : true)
                 .filter(s -> minSpeed != null ? s.getSpeed() >= minSpeed : true)
                 .filter(s -> maxSpeed != null ? s.getSpeed() <= maxSpeed : true)
                 .filter(s -> minCrewSize != null ? s.getCrewSize() >= minCrewSize : true)
                 .filter(s -> maxCrewSize != null ? s.getCrewSize() <= maxCrewSize : true)
                 .filter(s -> minRating != null ? s.getRating() >= minRating : true)
                 .filter(s -> maxRating != null ? s.getRating() <= maxRating : true)
+                .skip(pageSize.get() * pageNumber.get())
+                .limit( pageSize.get())
                 .collect(Collectors.toCollection(ArrayList::new));
 
         Page<Ship> page = new PageImpl<>(allShips, PageRequest.of(pageNumber.orElse(0), pageSize.orElse(3), Sort.by(order.getFieldName()).ascending()), allShips.size());
 
-//        shipRepository.findAllBySpeedGreaterThanEqualAndProdDateAfter(minSpeed, new Date(after));
-        return page;
+        return allShips;
     }
 
 
@@ -93,7 +94,16 @@ public class ShipServiceImpl implements ShipService {
 
     @Override
     public Ship updateShip(Long id, Ship ship) {
-        ship.setId(id);
+        Ship foundShip = getShip(id);
+        if (foundShip == null)
+            return null;
+
+        if (foundShip.getName() != null)
+            foundShip.setName(ship.getName());
+
+        if (foundShip.getName() != null)
+            foundShip.setName(ship.getName());
+
         try {
             ship.setRating(getRating(ship));
         } catch (ParseException e) {
