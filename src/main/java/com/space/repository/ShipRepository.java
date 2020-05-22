@@ -3,11 +3,13 @@ package com.space.repository;
 import com.space.controller.ShipOrder;
 import com.space.model.Ship;
 import com.space.model.ShipType;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
-
+import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface ShipRepository extends JpaRepository<Ship, Long> {
@@ -23,4 +25,8 @@ public interface ShipRepository extends JpaRepository<Ship, Long> {
 
     @Query("select b from Ship b where b.id = :id")
     Ship getShip(@Param("id") Long id);
+
+//    @Query("select b from Ship b where b.name like %?1%")
+//    Page<Ship> findByName(Pageable pageable);
+
 }

@@ -4,6 +4,7 @@ import com.space.model.Ship;
 import com.space.model.ShipType;
 import com.space.service.ShipService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,7 +24,7 @@ public class ShipController {
     }
 
     @GetMapping(value = "rest/ships")
-    public ResponseEntity<List<Ship>> getShipsList(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "planet", required = false) String planet,
+    public ResponseEntity<Page<Ship>> getShipsList(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "planet", required = false) String planet,
                                                    @RequestParam(value = "ShipType", required = false) ShipType shipType, @RequestParam(value = "after", required = false) Long after,
                                                    @RequestParam(value = "before", required = false) Long before, @RequestParam(value = "isUsed", required = false) Boolean isUsed,
                                                    @RequestParam(value = "minSpeed", required = false) Double minSpeed, @RequestParam(value = "maxSpeed", required = false) Double maxSpeed,
@@ -41,8 +42,8 @@ public class ShipController {
         if (isUsed == null)
             isUsed = false;
 
-        List<Ship> shipList = shipService.getShipsList(name, planet, shipType, after, before, isUsed, minSpeed, maxSpeed, minCrewSize, maxCrewSize, minRating,
-                maxRating, order, pageNumber, pageSize);
+        Page<Ship> shipList = shipService.getShipsList(name, planet, shipType, after, before, isUsed, minSpeed, maxSpeed, minCrewSize, maxCrewSize, minRating,
+                maxRating, order, Optional.of(pageNumber), Optional.of(pageSize));
 
         return shipList != null && !shipList.isEmpty()
                 ? new ResponseEntity<>(shipList, HttpStatus.OK)
