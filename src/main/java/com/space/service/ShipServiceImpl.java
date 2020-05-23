@@ -4,17 +4,12 @@ import com.space.controller.ShipOrder;
 import com.space.model.Ship;
 import com.space.model.ShipType;
 import com.space.repository.ShipRepository;
-import com.space.repository.ShipRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,10 +20,6 @@ public class ShipServiceImpl implements ShipService {
     @Autowired
     private ShipRepository shipRepository;
 
-//    @Autowired
-//    public void setShipRepository(ShipRepository shipRepository) {
-//        this.shipRepository = shipRepository;
-//    }
 
     @Override
     public List<Ship> getShipsList(String name, String planet, ShipType shipType, Long after, Long before,
@@ -37,14 +28,7 @@ public class ShipServiceImpl implements ShipService {
                                    Optional<Integer> pageNumber, Optional<Integer> pageSize)
     {
 
-//        return shipRepository.getShipsList(name, planet, shipType, after, before, isUsed, minSpeed, maxSpeed, minCrewSize, maxCrewSize, minRating,
-//                maxRating, order, pageNumber, pageSize);
-//        Page<Ship> allShips = shipRepository.findByName(PageRequest.of(0, 3, Sort.by(order.getFieldName()).ascending()));
-//        return allShips;
-//        Page<Ship> allShips = shipRepository.findAll(PageRequest.of(0, 5, Sort.by("id").ascending()));
-//        return allShips;
-//        Page<Ship> page = new PageImpl<>(allShips, PageRequest.of(pageNumber, pageSize, Sort.by(order.getFieldName()).ascending()), allShips.size());
-//        return page;
+
         List<Ship> allShips = shipRepository.findAll();
         if (order != null) {
             allShips = allShips.stream()
@@ -115,7 +99,7 @@ public class ShipServiceImpl implements ShipService {
                     .collect(Collectors.toCollection(ArrayList::new));
         }
 
-        //Page<Ship> page = new PageImpl<>(allShips, PageRequest.of(pageNumber.orElse(0), pageSize.orElse(3), Sort.by(order.getFieldName()).ascending()), allShips.size());
+
 
         return allShips;
     }
