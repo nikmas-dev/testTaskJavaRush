@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -44,32 +46,99 @@ public class ShipServiceImpl implements ShipService {
 //        Page<Ship> page = new PageImpl<>(allShips, PageRequest.of(pageNumber, pageSize, Sort.by(order.getFieldName()).ascending()), allShips.size());
 //        return page;
         List<Ship> allShips = shipRepository.findAll();
-        allShips = allShips.stream()
-                .filter(s -> name != null ? s.getName().contains(name) : true)
-                .filter(s -> planet != null ? s.getPlanet().contains(planet) : true)
-                .filter(s -> shipType != null ? s.getShipType().equals(shipType) : true)
-                .filter(s -> after != null ? s.getProdDate().after(new Date(after)) : true)
-                .filter(s -> before != null ? s.getProdDate().before(new Date(before)) : true)
-                .filter(s -> isUsed != null ? s.getUsed() : true)
-                .filter(s -> minSpeed != null ? s.getSpeed() >= minSpeed : true)
-                .filter(s -> maxSpeed != null ? s.getSpeed() <= maxSpeed : true)
-                .filter(s -> minCrewSize != null ? s.getCrewSize() >= minCrewSize : true)
-                .filter(s -> maxCrewSize != null ? s.getCrewSize() <= maxCrewSize : true)
-                .filter(s -> minRating != null ? s.getRating() >= minRating : true)
-                .filter(s -> maxRating != null ? s.getRating() <= maxRating : true)
-                .skip(pageSize.get() * pageNumber.get())
-                .limit( pageSize.get())
-                .collect(Collectors.toCollection(ArrayList::new));
+        if (order != null) {
+            allShips = allShips.stream()
+                    .sorted((s1, s2) -> {
+                        if (order.getFieldName().equals("id")) {
+                            return (int) (s1.getId() - s2.getId());
+                        }
 
-        Page<Ship> page = new PageImpl<>(allShips, PageRequest.of(pageNumber.orElse(0), pageSize.orElse(3), Sort.by(order.getFieldName()).ascending()), allShips.size());
+                        if (order.getFieldName().equals("speed")) {
+                            if (s1.getSpeed() < s2.getSpeed())
+                                return -1;
+
+                            if (s1.getSpeed() > s2.getSpeed())
+                                return 1;
+
+                            return 0;
+                        }
+
+                        if (order.getFieldName().equals("prodDate")) {
+                            if (s1.getProdDate().getTime() < s2.getProdDate().getTime())
+                                return -1;
+
+                            if (s1.getProdDate().getTime() > s2.getProdDate().getTime())
+                                return 1;
+
+                            return 0;
+                        }
+
+                        if (s1.getRating() < s2.getRating())
+                            return -1;
+
+                        if (s1.getRating() > s2.getRating())
+                            return 1;
+
+                        return 0;
+                    })
+                    .filter(s -> name != null ? s.getName().contains(name) : true)
+                    .filter(s -> planet != null ? s.getPlanet().contains(planet) : true)
+                    .filter(s -> shipType != null ? s.getShipType().equals(shipType) : true)
+                    .filter(s -> after != null ? s.getProdDate().getTime() >= after : true)
+                    .filter(s -> before != null ? s.getProdDate().getTime() <= before : true)
+                    .filter(s -> isUsed != null ? s.getUsed().equals(isUsed) : true)
+                    .filter(s -> minSpeed != null ? s.getSpeed() >= minSpeed : true)
+                    .filter(s -> maxSpeed != null ? s.getSpeed() <= maxSpeed : true)
+                    .filter(s -> minCrewSize != null ? s.getCrewSize() >= minCrewSize : true)
+                    .filter(s -> maxCrewSize != null ? s.getCrewSize() <= maxCrewSize : true)
+                    .filter(s -> minRating != null ? s.getRating() >= minRating : true)
+                    .filter(s -> maxRating != null ? s.getRating() <= maxRating : true)
+                    .skip(pageSize.get() * pageNumber.get())
+                    .limit(pageSize.get())
+                    .collect(Collectors.toCollection(ArrayList::new));
+        } else{
+            allShips = allShips.stream()
+                    .filter(s -> name != null ? s.getName().contains(name) : true)
+                    .filter(s -> planet != null ? s.getPlanet().contains(planet) : true)
+                    .filter(s -> shipType != null ? s.getShipType().equals(shipType) : true)
+                    .filter(s -> after != null ? s.getProdDate().getTime() >= after : true)
+                    .filter(s -> before != null ? s.getProdDate().getTime() <= before : true)
+                    .filter(s -> isUsed != null ? s.getUsed().equals(isUsed) : true)
+                    .filter(s -> minSpeed != null ? s.getSpeed() >= minSpeed : true)
+                    .filter(s -> maxSpeed != null ? s.getSpeed() <= maxSpeed : true)
+                    .filter(s -> minCrewSize != null ? s.getCrewSize() >= minCrewSize : true)
+                    .filter(s -> maxCrewSize != null ? s.getCrewSize() <= maxCrewSize : true)
+                    .filter(s -> minRating != null ? s.getRating() >= minRating : true)
+                    .filter(s -> maxRating != null ? s.getRating() <= maxRating : true)
+                    .skip(pageSize.get() * pageNumber.get())
+                    .limit(pageSize.get())
+                    .collect(Collectors.toCollection(ArrayList::new));
+        }
+
+        //Page<Ship> page = new PageImpl<>(allShips, PageRequest.of(pageNumber.orElse(0), pageSize.orElse(3), Sort.by(order.getFieldName()).ascending()), allShips.size());
 
         return allShips;
     }
 
 
     @Override
-    public Long getShipsCount(String name, String planet, ShipType shipType, Long after, Long before, Boolean isUsed, Double minSpead, Double maxSpeed, Integer minCrewSize, Integer maxCrewSize, Double minRating, Double maxRating) {
-        return shipRepository.count();
+    public Long getShipsCount(String name, String planet, ShipType shipType, Long after, Long before, Boolean isUsed, Double minSpeed, Double maxSpeed, Integer minCrewSize, Integer maxCrewSize, Double minRating, Double maxRating) {
+        List<Ship> allShips = shipRepository.findAll();
+        allShips = allShips.stream()
+                .filter(s -> name != null ? s.getName().contains(name) : true)
+                .filter(s -> planet != null ? s.getPlanet().contains(planet) : true)
+                .filter(s -> shipType != null ? s.getShipType().equals(shipType) : true)
+                .filter(s -> after != null ? s.getProdDate().getTime() >= after : true)
+                .filter(s -> before != null ? s.getProdDate().getTime() <= before : true)
+                .filter(s -> isUsed != null ? s.getUsed().equals(isUsed) : true)
+                .filter(s -> minSpeed != null ? s.getSpeed() >= minSpeed : true)
+                .filter(s -> maxSpeed != null ? s.getSpeed() <= maxSpeed : true)
+                .filter(s -> minCrewSize != null ? s.getCrewSize() >= minCrewSize : true)
+                .filter(s -> maxCrewSize != null ? s.getCrewSize() <= maxCrewSize : true)
+                .filter(s -> minRating != null ? s.getRating() >= minRating : true)
+                .filter(s -> maxRating != null ? s.getRating() <= maxRating : true)
+                .collect(Collectors.toCollection(ArrayList::new));
+        return (long)allShips.size();
     }
 
 
@@ -98,24 +167,42 @@ public class ShipServiceImpl implements ShipService {
         if (foundShip == null)
             return null;
 
-        if (foundShip.getName() != null)
+        if (ship.getName() != null)
             foundShip.setName(ship.getName());
 
-        if (foundShip.getName() != null)
-            foundShip.setName(ship.getName());
+        if (ship.getPlanet() != null)
+            foundShip.setPlanet(ship.getPlanet());
+
+        if (ship.getShipType() != null)
+            foundShip.setShipType(ship.getShipType());
+
+        if (ship.getProdDate() != null)
+            foundShip.setProdDate(ship.getProdDate());
+
+        if (ship.getUsed() != null)
+            foundShip.setUsed(ship.getUsed());
+
+        if (ship.getSpeed() != null)
+            foundShip.setSpeed(ship.getSpeed());
+
+        if (ship.getCrewSize() != null)
+            foundShip.setCrewSize(ship.getCrewSize());
 
         try {
-            ship.setRating(getRating(ship));
+            foundShip.setRating(getRating(foundShip));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return shipRepository.saveAndFlush(ship);
+        return shipRepository.saveAndFlush(foundShip);
     }
 
 
     @Override
     public Boolean deleteShip(Long id) {
-        shipRepository.delete(shipRepository.getShip(id));
+        Ship ship = shipRepository.getShip(id);
+        if (ship == null)
+            return false;
+        shipRepository.delete(ship);
         return true;
     }
 
@@ -127,6 +214,6 @@ public class ShipServiceImpl implements ShipService {
         int shipProdYear = shipProd.get(Calendar.YEAR);
 
         Double rating = 80 * ship.getSpeed() * k / (3019 - shipProdYear + 1);
-        return rating;
+        return new BigDecimal(rating).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 }

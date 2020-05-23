@@ -10,8 +10,8 @@ import java.util.Date;
 public class Ship {
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
+    @TableGenerator(name = "Ship_gen", initialValue = 0)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")

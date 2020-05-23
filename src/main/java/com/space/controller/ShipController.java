@@ -25,7 +25,7 @@ public class ShipController {
 
     @GetMapping(value = "rest/ships")
     public ResponseEntity<List<Ship>> getShipsList(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "planet", required = false) String planet,
-                                                   @RequestParam(value = "ShipType", required = false) ShipType shipType, @RequestParam(value = "after", required = false) Long after,
+                                                   @RequestParam(value = "shipType", required = false) ShipType shipType, @RequestParam(value = "after", required = false) Long after,
                                                    @RequestParam(value = "before", required = false) Long before, @RequestParam(value = "isUsed", required = false) Boolean isUsed,
                                                    @RequestParam(value = "minSpeed", required = false) Double minSpeed, @RequestParam(value = "maxSpeed", required = false) Double maxSpeed,
                                                    @RequestParam(value = "minCrewSize", required = false) Integer minCrewSize, @RequestParam(value = "maxCrewSize", required = false) Integer maxCrewSize,
@@ -50,14 +50,12 @@ public class ShipController {
 
     @GetMapping(value = "rest/ships/count")
     public ResponseEntity<Long> getShipsCount(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "planet", required = false) String planet,
-                                              @RequestParam(value = "ShipType", required = false) ShipType shipType, @RequestParam(value = "after", required = false) Long after,
+                                              @RequestParam(value = "shipType", required = false) ShipType shipType, @RequestParam(value = "after", required = false) Long after,
                                               @RequestParam(value = "before", required = false) Long before, @RequestParam(value = "isUsed", required = false) Boolean isUsed,
                                               @RequestParam(value = "minSpeed", required = false) Double minSpeed, @RequestParam(value = "maxSpeed", required = false) Double maxSpeed,
                                               @RequestParam(value = "minCrewSize", required = false) Integer minCrewSize, @RequestParam(value = "maxCrewSize", required = false) Integer maxCrewSize,
                                               @RequestParam(value = "minRating", required = false) Double minRating, @RequestParam(value = "maxRating", required = false) Double maxRating
     ) {
-        if (isUsed == null)
-            isUsed = false;
 
         Long shipsCount = shipService.getShipsCount(name, planet, shipType, after, before, isUsed, minSpeed, maxSpeed, minCrewSize, maxCrewSize, minRating,
                 maxRating);
@@ -77,6 +75,9 @@ public class ShipController {
 
         if (ship.getName().length() > 50 || ship.getPlanet().length() > 50)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (ship.getUsed() == null)
+            ship.setUsed(false);
 
         Calendar startRangeCalendar = new GregorianCalendar(2800, Calendar.JANUARY, 1);
 
@@ -103,7 +104,7 @@ public class ShipController {
 
     @GetMapping(value = "rest/ships/{id}")
     public ResponseEntity<Ship> getShip(@PathVariable Long id) {
-        if (id < 0)
+        if (id < 1)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         Ship ship = shipService.getShip(id);
@@ -112,9 +113,44 @@ public class ShipController {
     }
 
     @PostMapping(value = "rest/ships/{id}")
-    public ResponseEntity<?> updateShip(@PathVariable Long id, @RequestBody Ship ship) {
-        if (id < 0)
+    public ResponseEntity<?> updateShip(@PathVariable Long id, @RequestBody Ship ship) throws ParseException {
+        if (id < 1)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if (ship.getName() != null) {
+            if (ship.getName().isEmpty() || ship.getName().length() > 50)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (ship.getPlanet() != null){
+            if (ship.getPlanet().isEmpty() || ship.getPlanet().length() > 50)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (ship.getProdDate() != null){
+            Calendar startRangeCalendar = new GregorianCalendar(2800, Calendar.JANUARY, 1);
+
+            Date d = new SimpleDateFormat("MM/dd/yyyy").parse("01/12/3019");
+            Calendar finishRangeCalendar = Calendar.getInstance();
+            finishRangeCalendar.setTime(d);
+            finishRangeCalendar.set(Calendar.DATE, finishRangeCalendar.getActualMaximum(Calendar.DATE));
+            finishRangeCalendar.set(Calendar.HOUR, 23);
+            finishRangeCalendar.set(Calendar.MINUTE, 59);
+            finishRangeCalendar.set(Calendar.SECOND, 59);
+
+            if (ship.getProdDate().before(startRangeCalendar.getTime()) || ship.getProdDate().after(finishRangeCalendar.getTime()))
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (ship.getSpeed() != null) {
+            if (ship.getSpeed() < 0.01 || ship.getSpeed() > 0.99)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (ship.getCrewSize() != null) {
+            if (ship.getCrewSize() < 1 || ship.getCrewSize() > 9999)
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         Ship updatedShip = shipService.updateShip(id, ship);
         return updatedShip != null ? new ResponseEntity<>(updatedShip, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -122,7 +158,7 @@ public class ShipController {
 
     @DeleteMapping(value = "rest/ships/{id}")
     public ResponseEntity<?> deleteShip(@PathVariable Long id) {
-        if (id < 0)
+        if (id < 1)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         Boolean isDeleted = shipService.deleteShip(id);
